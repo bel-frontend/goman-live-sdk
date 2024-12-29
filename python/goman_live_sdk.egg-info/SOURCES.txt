@@ -1,0 +1,10 @@
+LICENSE.md
+README.md
+setup.py
+goman_live_sdk/__init__.py
+goman_live_sdk/prompt_sdk.py
+goman_live_sdk.egg-info/PKG-INFO
+goman_live_sdk.egg-info/SOURCES.txt
+goman_live_sdk.egg-info/dependency_links.txt
+goman_live_sdk.egg-info/requires.txt
+goman_live_sdk.egg-info/top_level.txt

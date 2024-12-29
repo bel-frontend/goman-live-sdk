@@ -1,0 +1,43 @@
+{
+  "name": "goman-live",
+  "version": "0.1.27",
+  "description": "A simple SDK for interacting with a SaaS service to fetch and manage prompts. Works in both Node.js and browser environments.",
+  "main": "dist/goman-live.umd.js",
+  "module": "dist/goman-live.es.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "vite build && npm run build:types",
+    "build:types": "tsc --emitDeclarationOnly",
+    "prepublishOnly": "npm run build",
+    "test": "jest"
+  },
+  "keywords": [
+    "templates",
+    "prompts",
+    "node",
+    "prompts manager"
+  ],
+  "author": "Goman Live",
+  "license": "MIT",
+  "dependencies": {
+    "@types/ws": "^8.5.13",
+    "base64-js": "^1.5.1",
+    "dotenv": "^16.4.5",
+    "install": "^0.13.0",
+    "node-fetch": "^2.6.1",
+    "npm": "^10.8.3",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.10.2",
+    "jest": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3",
+    "mock-socket": "^9.3.1",
+    "msw": "^2.6.8",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.5.4",
+    "vite": "^4.0.0"
+  }
+}
