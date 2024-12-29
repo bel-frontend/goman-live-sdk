@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     author='goman.live',
     author_email='goman.live.service@gmail.com',
-    url='https://github.com/piotrazsko/goman-live',
+    url='https://github.com/bel-frontend/goman-live-sdk',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
