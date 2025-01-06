@@ -2,7 +2,7 @@ Metadata-Version: 2.1
 Name: goman-live-sdk
 Version: 0.1.10
 Summary: A Python SDK for fetching and managing prompts by goman.live
-Home-page: https://github.com/piotrazsko/goman-live
+Home-page: https://github.com/bel-frontend/goman-live-sdk
 Author: goman.live
 Author-email: goman.live.service@gmail.com
 License: UNKNOWN
