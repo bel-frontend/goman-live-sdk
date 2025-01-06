@@ -168,7 +168,7 @@ export class PromptSDK {
    * @returns A promise that resolves to the WebSocket connection.
    */
   async initSocket(
-    baseUrl: string,
+    baseUrl: string = "wss://api.goman.live/ws_sdk",
     {
       apiKey = this.config.apiKey,
       applicationId = this.config.applicationId,
