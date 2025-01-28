@@ -9,6 +9,7 @@ To use this SDK in your Python project, install it via pip:
 ```bash
 pip install goman-live-sdk
 ```
+
 Example:
 
 ```python
@@ -17,8 +18,7 @@ from goman_live_sdk import PromptSDK
 # Initialize the SDK
 application_id = "your_application_id"
 api_key = "your_api_key"
-base_url = "https://api.goman.live"
-sdk = PromptSDK(application_id, api_key, base_url)
+sdk = PromptSDK(application_id, api_key)
 
 # Fetch a prompt from the remote server
 prompt_id = "example_prompt_id"
@@ -78,11 +78,9 @@ def __init__(self, application_id: str, api_key: str, base_url: str = "https://a
 
 ### Methods
 
-#### 
+####
 
 get_prompt_from_remote
-
-
 
 Fetches a prompt from the remote server and processes the template with context.
 
@@ -99,17 +97,15 @@ def get_prompt_from_remote(
 - **context** (Dict[str, str], optional): A dictionary of context variables to replace in the template. Defaults to an empty dictionary.
 - **options** (Dict[str, str], optional): Additional options such as a custom URL for fetching the prompt. Defaults to an empty dictionary.
 
-Returns a 
+Returns a
 
 PromptResponse
 
- object containing the prompt ID, processed template, and metadata.
+object containing the prompt ID, processed template, and metadata.
 
-#### 
+####
 
 send_json_result_to_editor
-
-
 
 Sends a JSON result to the editor for a specific prompt.
 
@@ -122,11 +118,9 @@ def send_json_result_to_editor(self, result_json: str, prompt_id: str):
 
 Returns the server's response as a JSON object.
 
-#### 
+####
 
 send_image_result_to_editor
-
-
 
 Sends an image result to the editor for a specific prompt.
 
@@ -139,11 +133,9 @@ def send_image_result_to_editor(self, result_image: Union[str, bytes], prompt_id
 
 Returns the server's response as a JSON object.
 
-#### 
+####
 
 init_socket
-
-
 
 Initializes a WebSocket connection for real-time communication.
 
@@ -164,11 +156,9 @@ def init_socket(
 - **prompt_id** (str, optional): The ID of the prompt associated with the connection. Defaults to an empty string.
 - **close_socket_after_callback** (bool, optional): Whether to close the WebSocket after processing a callback. Defaults to False.
 
-#### 
+####
 
 close_socket
-
-
 
 Closes the WebSocket connection if it is open.
 
@@ -176,11 +166,9 @@ Closes the WebSocket connection if it is open.
 def close_socket(self):
 ```
 
-#### 
+####
 
 init_callbacks
-
-
 
 Adds a callback to be executed when a WebSocket message is received.
 
@@ -192,19 +180,15 @@ def init_callbacks(self, callback: Callable[..., Any]):
 
 ## Classes
 
-### 
+###
 
 Config
 
-
-
 A configuration class for storing application ID, API key, and base URL.
 
-### 
+###
 
 PromptResponse
-
-
 
 A class representing the response from fetching a prompt, containing the prompt ID, processed template, and metadata.
 
@@ -221,6 +205,8 @@ class PromptResponse:
         self.value = value
         self.metadata = metadata
 ```
+
 ```
 
 This documentation provides detailed information about the `PromptSDK` class, its methods, and the associated classes.
+```
