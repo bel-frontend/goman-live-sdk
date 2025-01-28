@@ -3,6 +3,7 @@ import os
 from typing import Any, Callable, Dict, List, Optional, Union
 import requests
 import websocket
+from websocket import WebSocket
 import base64
 
 class Config:
@@ -20,7 +21,7 @@ class PromptResponse:
 
 
 class PromptSDK:
-    def __init__(self, application_id: str, api_key: str, base_url: str):
+    def __init__(self, application_id: str, api_key: str, base_url: str = "https://api.goman.live"):
         self.config = Config(application_id, api_key, base_url)
         self.socket: Optional[WebSocket] = None
         self.callbacks: List[Callable[..., Any]] = []
@@ -105,7 +106,7 @@ class PromptSDK:
 
     def init_socket(
         self,
-        base_url: str,
+        base_url: str = "wss://api.goman.live/ws_sdk",
         api_key: Optional[str] = None,
         application_id: Optional[str] = None,
         prompt_id: str = "",
@@ -151,29 +152,6 @@ class PromptSDK:
         self.socket = ws
         ws.run_forever()
 
-        # ws.run_forever(dispatcher=rel, reconnect=5) 
-
-        # try:
-        #     while True:
-        #         print("Waiting for message...")
-        #         message = self.socket.recv()
-        #         print(f"Received message: {message}")
-        #         results = []
-        #         data = json.loads(message)
-        #         print(f"Parsed message data: {data}")
-        #         for callback in self.callbacks:
-        #             res = callback(data)
-        #             results.append(res)
-
-        #         print(f"Callback results: {results}")
-        #         self.socket.send(json.dumps({"results": results}))
-
-        #         if close_socket_after_callback:
-        #             print("Closing WebSocket after callback")
-        #             self.socket.close()
-        #             break
-        # except Exception as e:
-        #     print(f"Error in WebSocket message handling: {e}")
 
     def close_socket(self):
         if self.socket:
