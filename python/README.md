@@ -17,13 +17,13 @@ from prompt_sdk import PromptSDK
 # Initialize the SDK
 application_id = "your_application_id"
 api_key = "your_api_key"
-base_url = "https://api.example.com"
+base_url = "https://api.goman.live"
 sdk = PromptSDK(application_id, api_key, base_url)
 
 # Fetch a prompt from the remote server
 prompt_id = "example_prompt_id"
 context = {"username": "JohnDoe"}
-options = {"url": "https://api.example.com/custom_prompts/example_prompt_id"}
+options = {"url": "https://https://api.goman.live/prompts/example_prompt_id"}
 try:
     prompt_response = sdk.get_prompt_from_remote(prompt_id, context, options)
     print(f"Prompt: {prompt_response.template}")

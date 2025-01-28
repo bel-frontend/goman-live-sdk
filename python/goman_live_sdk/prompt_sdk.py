@@ -20,7 +20,7 @@ class PromptResponse:
 
 
 class PromptSDK:
-    def __init__(self, application_id: str, api_key: str, base_url: str):
+    def __init__(self, application_id: str, api_key: str, base_url: str = "https://api.goman.live"):
         self.config = Config(application_id, api_key, base_url)
         self.socket: Optional[WebSocket] = None
         self.callbacks: List[Callable[..., Any]] = []
