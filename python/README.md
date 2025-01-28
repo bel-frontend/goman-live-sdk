@@ -9,10 +9,10 @@ To use this SDK in your Python project, install it via pip:
 ```bash
 pip install goman-live-sdk
 ```
+Example:
 
 ```python
 from goman_live_sdk import PromptSDK
-from prompt_sdk import PromptSDK
 
 # Initialize the SDK
 application_id = "your_application_id"
@@ -23,7 +23,6 @@ sdk = PromptSDK(application_id, api_key, base_url)
 # Fetch a prompt from the remote server
 prompt_id = "example_prompt_id"
 context = {"username": "JohnDoe"}
-options = {"url": "https://https://api.goman.live/prompts/example_prompt_id"}
 try:
     prompt_response = sdk.get_prompt_from_remote(prompt_id, context, options)
     print(f"Prompt: {prompt_response.template}")
@@ -53,10 +52,175 @@ def example_callback(data):
 
 sdk.init_callbacks(example_callback)
 try:
-    sdk.init_socket(base_url, api_key, application_id, prompt_id)
+    sdk.init_socket(api_key, application_id, prompt_id)
 except Exception as e:
     print(f"Error initializing WebSocket: {e}")
 
 # Close the WebSocket connection
 sdk.close_socket()
 ```
+
+# PromptSDK Documentation
+
+The `PromptSDK` class provides methods to interact with the Goman Live API for fetching and managing prompts, sending results, and handling WebSocket connections.
+
+## Class: `PromptSDK`
+
+### Constructor
+
+```python
+def __init__(self, application_id: str, api_key: str, base_url: str = "https://api.goman.live"):
+```
+
+- **application_id** (str): The unique identifier for the application.
+- **api_key** (str): The API key for authenticating requests.
+- **base_url** (str, optional): The base URL of the API server. Defaults to "https://api.goman.live".
+
+### Methods
+
+#### 
+
+get_prompt_from_remote
+
+
+
+Fetches a prompt from the remote server and processes the template with context.
+
+```python
+def get_prompt_from_remote(
+    self,
+    prompt_id: str,
+    context: Dict[str, str] = {},
+    options: Dict[str, str] = {},
+) -> PromptResponse:
+```
+
+- **prompt_id** (str): The ID of the prompt to fetch.
+- **context** (Dict[str, str], optional): A dictionary of context variables to replace in the template. Defaults to an empty dictionary.
+- **options** (Dict[str, str], optional): Additional options such as a custom URL for fetching the prompt. Defaults to an empty dictionary.
+
+Returns a 
+
+PromptResponse
+
+ object containing the prompt ID, processed template, and metadata.
+
+#### 
+
+send_json_result_to_editor
+
+
+
+Sends a JSON result to the editor for a specific prompt.
+
+```python
+def send_json_result_to_editor(self, result_json: str, prompt_id: str):
+```
+
+- **result_json** (str): The JSON object or string to send.
+- **prompt_id** (str): The ID of the prompt associated with the result.
+
+Returns the server's response as a JSON object.
+
+#### 
+
+send_image_result_to_editor
+
+
+
+Sends an image result to the editor for a specific prompt.
+
+```python
+def send_image_result_to_editor(self, result_image: Union[str, bytes], prompt_id: str):
+```
+
+- **result_image** (Union[str, bytes]): The image as a base64 string or bytes to send.
+- **prompt_id** (str): The ID of the prompt associated with the image.
+
+Returns the server's response as a JSON object.
+
+#### 
+
+init_socket
+
+
+
+Initializes a WebSocket connection for real-time communication.
+
+```python
+def init_socket(
+    self,
+    base_url: str = "wss://api.goman.live/ws_sdk",
+    api_key: Optional[str] = None,
+    application_id: Optional[str] = None,
+    prompt_id: str = "",
+    close_socket_after_callback: bool = False,
+):
+```
+
+- **base_url** (str, optional): The base URL of the WebSocket server. Defaults to "wss://api.goman.live/ws_sdk".
+- **api_key** (Optional[str], optional): The API key for authentication. Defaults to the configured API key.
+- **application_id** (Optional[str], optional): The application ID for authentication. Defaults to the configured application ID.
+- **prompt_id** (str, optional): The ID of the prompt associated with the connection. Defaults to an empty string.
+- **close_socket_after_callback** (bool, optional): Whether to close the WebSocket after processing a callback. Defaults to False.
+
+#### 
+
+close_socket
+
+
+
+Closes the WebSocket connection if it is open.
+
+```python
+def close_socket(self):
+```
+
+#### 
+
+init_callbacks
+
+
+
+Adds a callback to be executed when a WebSocket message is received.
+
+```python
+def init_callbacks(self, callback: Callable[..., Any]):
+```
+
+- **callback** (Callable[..., Any]): The callback function to handle WebSocket messages.
+
+## Classes
+
+### 
+
+Config
+
+
+
+A configuration class for storing application ID, API key, and base URL.
+
+### 
+
+PromptResponse
+
+
+
+A class representing the response from fetching a prompt, containing the prompt ID, processed template, and metadata.
+
+```python
+class Config:
+    def __init__(self, application_id: str, api_key: str, base_url: str):
+        self.application_id = application_id
+        self.api_key = api_key
+        self.base_url = base_url
+
+class PromptResponse:
+    def __init__(self, id: str, value: str, metadata: Dict[str, Any]):
+        self.id = id
+        self.value = value
+        self.metadata = metadata
+```
+```
+
+This documentation provides detailed information about the `PromptSDK` class, its methods, and the associated classes.
