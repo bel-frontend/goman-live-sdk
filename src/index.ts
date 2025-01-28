@@ -6,7 +6,7 @@ export { UniversalWebSocket } from "./WebsocketReconnect";
 interface Config {
   applicationId: string;
   apiKey: string;
-  baseUrl: string;
+  baseUrl?: string;
   promptId?: string;
 }
 
@@ -31,7 +31,11 @@ export class PromptSDK {
    * @param baseUrl - The base URL of the API server.
    */
 
-  constructor({ applicationId, apiKey, baseUrl }: Config) {
+  constructor({
+    applicationId,
+    apiKey,
+    baseUrl = "https://api.goman.live",
+  }: Config) {
     this.config = { applicationId, apiKey, baseUrl };
   }
 
@@ -167,28 +171,27 @@ export class PromptSDK {
    * @param onError - A callback function to execute when an error occurs.
    * @returns A promise that resolves to the WebSocket connection.
    */
-  async initSocket(
-    baseUrl: string = "wss://api.goman.live/ws_sdk",
-    {
-      apiKey = this.config.apiKey,
-      applicationId = this.config.applicationId,
-      promptId = this.promptId,
-      closeSocketAfterCallback = true,
-      onConnect = () => {},
-      onCloseConnection = () => {},
-      onMessage = (data: any) => {},
-      onError = (error: any) => {},
-    }: {
-      apiKey?: string;
-      applicationId?: string;
-      promptId?: string;
-      closeSocketAfterCallback?: boolean;
-      onConnect?: () => void;
-      onCloseConnection?: () => void;
-      onMessage?: (data: any) => void;
-      onError?: (error: any) => void;
-    }
-  ) {
+  async initSocket({
+    baseUrl = "wss://api.goman.live/ws_sdk",
+    apiKey = this.config.apiKey,
+    applicationId = this.config.applicationId,
+    promptId = this.promptId,
+    closeSocketAfterCallback = true,
+    onConnect = () => {},
+    onCloseConnection = () => {},
+    onMessage = (data: any) => {},
+    onError = (error: any) => {},
+  }: {
+    baseUrl?: string;
+    apiKey?: string;
+    applicationId?: string;
+    promptId?: string;
+    closeSocketAfterCallback?: boolean;
+    onConnect?: () => void;
+    onCloseConnection?: () => void;
+    onMessage?: (data: any) => void;
+    onError?: (error: any) => void;
+  }) {
     this.promptId = promptId;
     const uri = `${baseUrl}?promptId=${promptId}&apiKey=${apiKey}&applicationId=${applicationId}`;
     console.log(`Connecting to WebSocket at ${uri}`);
