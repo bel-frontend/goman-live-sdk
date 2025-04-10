@@ -177,10 +177,13 @@ export class PromptSDK {
     applicationId = this.config.applicationId,
     promptId = this.promptId,
     closeSocketAfterCallback = true,
+    maxReconnectAttempts= 5,
+    reconnectIntreval = 3000,
     onConnect = () => {},
     onCloseConnection = () => {},
     onMessage = (data: any) => {},
     onError = (error: any) => {},
+
   }: {
     baseUrl?: string;
     apiKey?: string;
@@ -191,13 +194,15 @@ export class PromptSDK {
     onCloseConnection?: () => void;
     onMessage?: (data: any) => void;
     onError?: (error: any) => void;
+    maxReconnectAttempts?: number;
+    reconnectIntreval?: number;
   }) {
     this.promptId = promptId;
     const uri = `${baseUrl}?promptId=${promptId}&apiKey=${apiKey}&applicationId=${applicationId}`;
     console.log(`Connecting to WebSocket at ${uri}`);
     this.socket = new UniversalWebSocket(uri, {
-      maxReconnectAttempts: 5,
-      reconnectInterval: 3000,
+      maxReconnectAttempts:  maxReconnectAttempts, // this is  count of attempts to reconnect
+      reconnectInterval: reconnectIntreval, // this is time in ms to wait before reconnecting
       onOpen: (event) => {
         console.log("WebSocket connection opened.");
         onConnect();
