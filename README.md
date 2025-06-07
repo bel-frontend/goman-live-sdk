@@ -8,6 +8,7 @@
 
 - Fetch templates from a remote server with dynamic context injection.
 - Replace placeholders in templates with values from environment variables or provided context.
+- **PromptBuilder**: Advanced prompt processing and normalization.
 - Send JSON and image results to a remote editor.
 - Real-time communication with WebSocket support for callbacks and prompt interactions.
 - Includes metadata handling for additional customization.
@@ -47,7 +48,6 @@ const sdk = new PromptSDK({
     apiKey: apikey,
     baseUrl: baseurl,
 });
-
 ```
 
 ---
@@ -68,7 +68,6 @@ try {
 } catch (error) {
     console.error('Error fetching prompt:', error);
 }
-
 ```
 
 ---
@@ -105,7 +104,30 @@ try {
 } catch (error) {
     console.error('Error fetching prompt:', error);
 }
+```
 
+---
+
+## 🆕 Advanced Prompt Processing with `getPromptBuilder`
+
+The new `getPromptBuilder` method returns a `PromptBuilder` instance for advanced prompt manipulation, normalization, and integration with tools like LangChain.
+
+### Example
+
+```
+const builder = await sdk.getPromptBuilder("6755b6fa1ea892fc7e6c846b", { username: "Alex" });
+
+const promptText = builder
+  .normalize()
+  .fill({ username: "Alex" })
+  .escapeJsonPlaceholders({ errorJson: { title: "error", content: null } })
+  .get();
+
+console.log("Final prompt:", promptText);
+
+// Integration with LangChain
+// import { PromptTemplate } from "@langchain/core/prompts";
+// const prompt = PromptTemplate.fromTemplate(promptText);
 ```
 
 ---
@@ -116,7 +138,7 @@ Use `sendJsonResultToEditor` to send JSON data to the remote editor.
 
 ```
 try {
-    const result = await promptSdk.sendJsonResultToEditor(
+    const result = await sdk.sendJsonResultToEditor(
         { key: 'value' }, // JSON data
         'prompt-id', // Associated prompt ID
     );
@@ -124,7 +146,6 @@ try {
 } catch (error) {
     console.error('Error sending result:', error);
 }
-
 ```
 
 ---
@@ -135,7 +156,7 @@ Use `sendImageResultToEditor` to send image data (as base64 or ArrayBuffer) to t
 
 ```
 try {
-    const result = await promptSdk.sendImageResultToEditor(
+    const result = await sdk.sendImageResultToEditor(
         'base64-image-data', // Image as base64 string
         'prompt-id', // Associated prompt ID
     );
@@ -143,8 +164,6 @@ try {
 } catch (error) {
     console.error('Error sending image:', error);
 }
-
-
 ```
 
 or file
@@ -162,12 +181,12 @@ Use `initSocket` to establish a WebSocket connection and process real-time messa
 
 ```
 // Add a callback to handle incoming WebSocket messages
-  sdk.initSocket("ws://localhost:3006", {
-    promptId: promptId,
-    apiKey: apikey,
-    applicationId: applicationId,
-    closeSocketAfterCallback: false,
-  });
+sdk.initSocket({
+  promptId: promptId,
+  apiKey: apikey,
+  applicationId: applicationId,
+  closeSocketAfterCallback: false,
+});
 
 // Example response to the server
 sdk.addCallback((data: any) => {
@@ -202,8 +221,7 @@ sdk.addCallback((data: any) => {
       sdk.sendImageResultToEditor(image, promptId);
       // sdk.closeSocket();
     }, 3000);
-  });
-
+});
 ```
 
 ---
