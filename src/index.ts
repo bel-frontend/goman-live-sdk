@@ -2,6 +2,7 @@
 import * as base64 from "base64-js";
 import { UniversalWebSocket } from "./WebsocketReconnect";
 export { UniversalWebSocket } from "./WebsocketReconnect";
+import { PromptBuilder } from "./core/PromptBuilder";
 
 interface Config {
   applicationId: string;
@@ -83,6 +84,35 @@ export class PromptSDK {
     );
 
     return { id: promptId, value: processedTemplate, metadata };
+  }
+
+  /**
+   * Retrieves a prompt builder for a specific prompt ID. Can be used with LangChain.
+   * @param promptId - The ID of the prompt to retrieve.
+   * @param context - A dictionary of context variables to replace in the template.
+   * @returns A promise that resolves to a PromptBuilder instance.
+   * @example
+   * const builder = await sdk.getPromptBuilder("6755b6fa1ea892fc7e6c846b");
+   *
+   * const promptText = builder
+   *   .normalize()
+   *   .fill({ username: "Alex" })
+   *   .escapeJsonPlaceholders({ errorJson: { title: "error", content: null } })
+   *   .get();
+   *
+   * console.log("Гатовы промпт:", promptText);
+   *
+   * // import { PromptTemplate } from "@langchain/core/prompts";
+   * // const prompt = PromptTemplate.fromTemplate(promptText);
+   */
+
+  async getPromptBuilder(
+    promptId: string,
+    context: Record<string, string> = {},
+    options: { url?: string } = {}
+  ): Promise<PromptBuilder> {
+    const response = await this.getPromptFromRemote(promptId, context, options);
+    return new PromptBuilder(response.value, response.metadata);
   }
 
   /**

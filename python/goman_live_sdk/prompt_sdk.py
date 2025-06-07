@@ -5,6 +5,7 @@ import requests
 import websocket
 from websocket import WebSocket
 import base64
+from prompt_builder import PromptBuilder
 
 class Config:
     def __init__(self, application_id: str, api_key: str, base_url: str):
@@ -159,3 +160,22 @@ class PromptSDK:
 
     def init_callbacks(self, callback: Callable[..., Any]):
         self.callbacks.append(callback)
+
+# prompt_builder = sdk.get_prompt_builder("6755b6fa1ea892fc7e6c846b")
+
+# builder = sdk.get_prompt_builder("6755b6fa1ea892fc7e6c846b").normalize()
+# prompt_text = builder.fill({"username": "Alex"}).get()
+
+# # Звонку (у іншым кодзе):
+# from langchain_core.prompts import PromptTemplate
+# prompt = PromptTemplate.from_template(prompt_text)
+
+
+def get_prompt_builder(
+    self,
+    prompt_id: str,
+    context: Dict[str, str] = {},
+    options: Dict[str, str] = {}
+) -> PromptBuilder:
+    response = self.get_prompt_from_remote(prompt_id, context, options)
+    return PromptBuilder(response.value, response.metadata)

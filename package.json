@@ -8,7 +8,8 @@
   "scripts": {
     "build": "vite build && npm run build:types",
     "build:types": "tsc --emitDeclarationOnly",
-    "prepublishOnly": "npm run build",
+    "version": "npm run build && git add .",
+    "prepublishOnly": "npm run build && git add . && npm version patch -m \"chore(release): %s\" && git push && git push --tags",
     "test": "jest"
   },
   "keywords": [
@@ -20,6 +21,7 @@
   "author": "Goman Live",
   "license": "MIT",
   "dependencies": {
+    "@langchain/core": "^0.3.57",
     "@types/ws": "^8.5.13",
     "base64-js": "^1.5.1",
     "dotenv": "^16.4.5",
