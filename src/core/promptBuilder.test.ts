@@ -67,6 +67,24 @@ describe("PromptBuilder", () => {
     );
   });
 
+  it("protectJsonBlocks() should protect valid JSON blocks from further processing", () => {
+    const builder = new PromptBuilder(
+      'Return: { "foo": "bar" } and { "baz": 1 }'
+    );
+    builder.protectJsonBlocks();
+    expect(builder.get()).toContain("{{'{'}}\"foo\": \"bar\"{{'}'}}");
+    expect(builder.get()).toContain("{{'{'}}\"baz\": 1{{'}'}}");
+  });
+
+  it("build() should process all steps and return the final prompt", () => {
+    const builder = new PromptBuilder(
+      'Hi, {{{name}}}. Data: {json} Example: { "foo": "bar" }'
+    );
+    const result = builder.build({ name: "Serj" }, { json: { test: 123 } });
+    expect(result).toContain('Hi, Serj. Data: {\\"test\\":123}');
+    expect(result).toMatch(/{{'{'}}\\\"foo\\\": \\\"bar\\\"{{'}'}}/);
+  });
+
   it("should handle a prompt with instructions and embedded JSON example", () => {
     const prompt = `
 You are a professional copywriter-translator. Check the users content to ensure it pertains to news about technologies, AI, devices,phones, computers, laptops, gadgets, large companies (MANG, Tesla, Samsung, etc), science, discoveries, computer games, movies, etc.  If the news is not about these topics, return the response JSON: {"title":"error", "content": null}.  Otherwise, make summary-brief (no more 150 words) and translate result to Belarussian language. Return  text only on Belarussian language.

@@ -95,4 +95,59 @@ export class PromptBuilder {
   getMetadata(): Record<string, any> {
     return this.metadata;
   }
+
+  /**
+   * Scans the processed template for JSON-like blocks (e.g., { "key": "value" }) and escapes them for safe use with LangChain or similar tools.
+   *
+   * For each detected JSON block, if it is valid JSON, it will be stringified and escaped (backslashes and quotes) and wrapped in double quotes,
+   * making it suitable for embedding in other JSON or prompt templates.
+   *
+   * This is useful when your prompt contains example JSON or expects to output JSON as part of the template, and you want to avoid parsing issues.
+   *
+   * @returns The current PromptBuilder instance for chaining.
+   *
+   * @example
+   * const builder = new PromptBuilder('Return: { "foo": "bar" }');
+   * builder.sanitizeForLangChain();
+   * // builder.get() will now contain: Return: "{\"foo\":\"bar\"}"
+   */
+  protectJsonBlocks(): this {
+    const jsonLikeBlocks = this.processedTemplate.match(/(\{[^{}]+\})/g);
+    if (jsonLikeBlocks) {
+      for (const block of jsonLikeBlocks) {
+        try {
+          JSON.parse(block); // калі гэта сапраўдны JSON
+          const protectedBlock = block
+            .replace(/\{/g, "{{'{'}}")
+            .replace(/\}/g, "{{'}'}}");
+          this.processedTemplate = this.processedTemplate.replace(
+            block,
+            protectedBlock
+          );
+        } catch {
+          // не JSON — прапускаем
+        }
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Builds and returns a final prompt string with optional context substitution,
+   * JSON escaping, and full sanitation for use with LangChain or similar systems.
+   *
+   * @param context - Optional map of simple key-value substitutions.
+   * @param jsonPlaceholders - Optional map of key -> JSON object to escape and inject.
+   * @returns Final processed prompt string.
+   */
+  build(
+    context: Record<string, string> = {},
+    jsonPlaceholders: Record<string, object> = {}
+  ): string {
+    return this.normalize()
+      .fill(context)
+      .escapeJsonPlaceholders(jsonPlaceholders)
+      .protectJsonBlocks()
+      .get();
+  }
 }
