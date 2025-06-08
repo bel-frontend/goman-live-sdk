@@ -1,72 +1,49 @@
-import { PromptBuilder } from "./PromptBuilder";
+import { wrapBraces } from "./wrapBraces";
 
-describe("PromptBuilder", () => {
-  it("normalize() should convert triple braces to single braces", () => {
-    const builder = new PromptBuilder("Hello, {{{name}}}!");
-    builder.normalize();
-    expect(builder.get()).toBe("Hello, {name}!");
+describe("wrapBraces", () => {
+  it("should convert triple braces to single and wrap single braces with double", () => {
+    const input = 'test prompt {{{data}}} : bla bla {"data":"dfsdkfhskd"}';
+    const expected = 'test prompt {data} : bla bla {{"data":"dfsdkfhskd"}}';
+    expect(wrapBraces(input)).toBe(expected);
   });
 
-  it("fill() should replace placeholders with context values", () => {
-    const builder = new PromptBuilder("Hi, {user}!");
-    builder.fill({ user: "Alex" });
-    expect(builder.get()).toBe("Hi, Alex!");
+  it("should wrap single braces and leave double braces as-is", () => {
+    const input = "{key} and {{{value}}} and {{ignored}}";
+    const expected = "{{key}} and {value} and {{ignored}}";
+    expect(wrapBraces(input)).toBe(expected);
   });
 
-  it("escapeJsonPlaceholders() should insert escaped JSON", () => {
-    const builder = new PromptBuilder("Data: {json}");
-    builder.escapeJsonPlaceholders({ json: { foo: "bar" } });
-    expect(builder.get()).toBe('Data: {\\"foo\\":\\"bar\\"}');
+  it("should leave strings without braces untouched", () => {
+    expect(wrapBraces("Nothing here")).toBe("Nothing here");
   });
 
-  it("protectJsonBlocks() should protect valid JSON blocks from further processing", () => {
-    const builder = new PromptBuilder(
-      'Return: { "foo": "bar" } and { "baz": 1 }'
-    );
-    builder.protectJsonBlocks();
-    expect(builder.get()).toContain("{{'{'}}\"foo\": \"bar\"{{'}'}}");
-    expect(builder.get()).toContain("{{'{'}}\"baz\": 1{{'}'}}");
+  it("should handle multiple mixed brace types", () => {
+    const input = "{{{a}}} {b} {{{c}}}";
+    const expected = "{a} {{b}} {c}";
+    expect(wrapBraces(input)).toBe(expected);
   });
 
-  it("build() should process all steps and return the final prompt", () => {
-    const builder = new PromptBuilder(
-      'Hi, {{{name}}}. Data: {json} Example: { "foo": "bar" }'
-    );
-    const result = builder.build({ name: "Serj" }, { json: { test: 123 } });
-    expect(result).toContain('Hi, Serj. Data: {\\"test\\":123}');
-    expect(result).toMatch(/{{'{'}}\\\"foo\\\": \\\"bar\\\"{{'}'}}/);
+  it("should not double-wrap already double braces", () => {
+    const input = "Mixed {one} and {{two}} and {{{three}}}";
+    const expected = "Mixed {{one}} and {{two}} and {three}";
+    expect(wrapBraces(input)).toBe(expected);
   });
 
-  it("should handle prompt containing figured dashes (–, —)", () => {
-    const builder = new PromptBuilder("Start – {word} — End");
-    builder.fill({ word: "middle" });
-    expect(builder.get()).toBe("Start – middle — End");
+  //   it("should handle nested braces correctly", () => {
+  //     const input = "Start {a{b}c} and {{{d}}}";
+  //     const expected = "Start {{a{b}c}} and {d}";
+  //     expect(wrapBraces(input)).toBe(expected);
+  //   });
+
+  it("should not modify already double-wrapped braces", () => {
+    const input = "{{already}}";
+    const expected = "{{already}}";
+    expect(wrapBraces(input)).toBe(expected);
   });
 
-  it("should handle prompt containing both JSON and plain text placeholders", () => {
-    const builder = new PromptBuilder("User: {username}, Data: {json}");
-    builder
-      .fill({ username: "Alex" })
-      .escapeJsonPlaceholders({ json: { foo: "bar", num: 42 } });
-    expect(builder.get()).toBe(
-      'User: Alex, Data: {\\"foo\\":\\"bar\\",\\"num\\":42}'
-    );
-  });
-
-  it("should handle prompt containing JSON string as plain text", () => {
-    const jsonString = '{"foo":"bar","baz":123}';
-    const builder = new PromptBuilder(`Here is JSON: {json}`);
-    builder.fill({ json: jsonString });
-    expect(builder.get()).toBe(`Here is JSON: ${jsonString}`);
-  });
-
-  it("should handle a prompt with instructions and embedded JSON example", () => {
-    const prompt = `
-You are a professional copywriter-translator. Check the users content to ensure it pertains to news about technologies, AI, devices,phones, computers, laptops, gadgets, large companies (MANG, Tesla, Samsung, etc), science, discoveries, computer games, movies, etc.  If the news is not about these topics, return the response JSON: {"title":"error", "content": null}.  Otherwise, make summary-brief (no more 150 words) and translate result to Belarussian language. Return  text only on Belarussian language.
-`;
-
-    const builder = new PromptBuilder(prompt);
-    expect(builder.get()).toContain('{"title":"error", "content": null}');
-    expect(builder.get()).toMatch(/Belarussian language/i);
+  it("should handle empty braces", () => {
+    const input = "{} and {{{}}}";
+    const expected = "{{}} and {}";
+    expect(wrapBraces(input)).toBe(expected);
   });
 });

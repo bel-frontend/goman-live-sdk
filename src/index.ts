@@ -2,7 +2,7 @@
 import * as base64 from "base64-js";
 import { UniversalWebSocket } from "./WebsocketReconnect";
 export { UniversalWebSocket } from "./WebsocketReconnect";
-import { PromptBuilder } from "./core/PromptBuilder";
+import { wrapBraces } from "./core/wrapBraces";
 
 interface Config {
   applicationId: string;
@@ -106,13 +106,13 @@ export class PromptSDK {
    * // const prompt = PromptTemplate.fromTemplate(promptText);
    */
 
-  async getPromptBuilder(
+  async getLangChainPrompt(
     promptId: string,
     context: Record<string, string> = {},
     options: { url?: string } = {}
-  ): Promise<PromptBuilder> {
+  ): Promise<string> {
     const response = await this.getPromptFromRemote(promptId, context, options);
-    return new PromptBuilder(response.value, response.metadata);
+    return wrapBraces(response.value);
   }
 
   /**
@@ -207,13 +207,12 @@ export class PromptSDK {
     applicationId = this.config.applicationId,
     promptId = this.promptId,
     closeSocketAfterCallback = true,
-    maxReconnectAttempts= 5,
+    maxReconnectAttempts = 5,
     reconnectIntreval = 3000,
     onConnect = () => {},
     onCloseConnection = () => {},
     onMessage = (data: any) => {},
     onError = (error: any) => {},
-
   }: {
     baseUrl?: string;
     apiKey?: string;
@@ -231,7 +230,7 @@ export class PromptSDK {
     const uri = `${baseUrl}?promptId=${promptId}&apiKey=${apiKey}&applicationId=${applicationId}`;
     console.log(`Connecting to WebSocket at ${uri}`);
     this.socket = new UniversalWebSocket(uri, {
-      maxReconnectAttempts:  maxReconnectAttempts, // this is  count of attempts to reconnect
+      maxReconnectAttempts: maxReconnectAttempts, // this is  count of attempts to reconnect
       reconnectInterval: reconnectIntreval, // this is time in ms to wait before reconnecting
       onOpen: (event) => {
         console.log("WebSocket connection opened.");
