@@ -46,4 +46,12 @@ describe("wrapBraces", () => {
     const expected = "{{}} and {}";
     expect(wrapBraces(input)).toBe(expected);
   });
+
+  it("should handle user prompt correctly", () => {
+    const input = `{{{name}}} You are a professional copywriter-translator. Check the users content to ensure it pertains to news about technologies, AI, devices,phones, computers, laptops, gadgets, large companies (MANG, Tesla, Samsung, etc), science, discoveries, computer games, movies, etc.  If the news is not about these topics, return the response JSON: {"title":"error", "content": null}.  Otherwise, make summary-brief (no more 150 words) and translate result to Belarussian language. Return  text only on Belarussian language.`;
+    const expected = `{name} You are a professional copywriter-translator. Check the users content to ensure it pertains to news about technologies, AI, devices,phones, computers, laptops, gadgets, large companies (MANG, Tesla, Samsung, etc), science, discoveries, computer games, movies, etc.  If the news is not about these topics, return the response JSON: {{"title":"error", "content": null}}.  Otherwise, make summary-brief (no more 150 words) and translate result to Belarussian language. Return  text only on Belarussian language.`;
+    console.log(`Result: ${wrapBraces(input)}`);
+
+    expect(wrapBraces(input)).toBe(expected);
+  });
 });
