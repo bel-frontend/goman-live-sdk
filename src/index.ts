@@ -110,9 +110,13 @@ export class PromptSDK {
     promptId: string,
     context: Record<string, string> = {},
     options: { url?: string } = {}
-  ): Promise<string> {
+  ): Promise<PromptResponse> {
     const response = await this.getPromptFromRemote(promptId, context, options);
-    return wrapBraces(response.value);
+    return {
+      value: wrapBraces(response.value),
+      metadata: response.metadata,
+      id: response.id,
+    };
   }
 
   /**
