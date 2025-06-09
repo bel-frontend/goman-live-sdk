@@ -46,6 +46,7 @@ export class PromptSDK {
    * @param context - A dictionary of context variables to replace in the template.
    * @param options - Additional options such as a custom URL for fetching the prompt.
    * @returns A promise that resolves to the processed prompt response.
+   *  without context, it returns the plain template.
    */
   async getPromptFromRemote(
     promptId: string,
@@ -74,6 +75,11 @@ export class PromptSDK {
 
     if (!template) {
       throw new Error(`Template value is missing in the response.`);
+    }
+
+    // If no context is provided (empty object), return the plain template
+    if (!context || Object.keys(context).length === 0) {
+      return { id: promptId, value: template, metadata };
     }
 
     const processedTemplate = template.replace(
